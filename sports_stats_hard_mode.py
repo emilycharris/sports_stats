@@ -1,7 +1,7 @@
 import psycopg2
 
 def start_over():
-    start_over = input("Would you like to (l)ook up a player, (a)dd a new player, or (q)uit? ").lower()
+    start_over = input("Would you like to (l)ook up or edit a player, (a)dd a new player, or (q)uit? ").lower()
 
     if start_over == 'l' or start_over == 'lookup':
         lookup()
@@ -13,6 +13,7 @@ def start_over():
         exit()
     else:
         exit()
+
 
 def lookup():
     cursor = connection.cursor()
@@ -41,7 +42,7 @@ def player_edit(player_name):
     field_select = input("\nWould you like to edit the player's (1) name, (2) class, (3) position, (4) height,\n"
                         "(5) points, (6) rebounds, or (7) assists?  Please enter 1-7. ")
     if field_select == '1':
-        edit_name = input("Enter the player's updated name: ")
+        edit_name = input("\nEnter the player's updated name: ")
 
         cursor.execute("UPDATE duke_stats SET player = %s WHERE player = %s", (edit_name, player_name))
         connection.commit()
@@ -49,7 +50,7 @@ def player_edit(player_name):
         update_other_fields(player_name)
 
     if field_select == '2':
-        edit_class = input("Enter the player's updated class: ")
+        edit_class = input("\nEnter the player's updated class: ")
 
         cursor.execute("UPDATE duke_stats SET class = %s WHERE player = %s", (edit_class, player_name))
         connection.commit()
@@ -57,7 +58,7 @@ def player_edit(player_name):
         update_other_fields(player_name)
 
     if field_select == '3':
-        edit_position = input("Enter the player's updated position: ")
+        edit_position = input("\nEnter the player's updated position: ")
 
         cursor.execute("UPDATE duke_stats SET position = %s WHERE player = %s", (edit_position, player_name))
         connection.commit()
@@ -65,7 +66,7 @@ def player_edit(player_name):
         update_other_fields(player_name)
 
     if field_select == '4':
-        edit_height = input("Enter the player's updated height: ")
+        edit_height = input("\nEnter the player's updated height: ")
 
         cursor.execute("UPDATE duke_stats SET height = %s WHERE player = %s", (edit_height, player_name))
         connection.commit()
@@ -73,7 +74,7 @@ def player_edit(player_name):
         update_other_fields(player_name)
 
     if field_select == '5':
-        edit_points = input("Enter the player's updated points: ")
+        edit_points = input("\nEnter the player's updated points: ")
 
         cursor.execute("UPDATE duke_stats SET points = %s WHERE player = %s", (edit_points, player_name))
         connection.commit()
@@ -81,7 +82,7 @@ def player_edit(player_name):
         update_other_fields(player_name)
 
     if field_select == '6':
-        edit_rebounds = input("Enter the player's updated rebounds: ")
+        edit_rebounds = input("\nEnter the player's updated rebounds: ")
 
         cursor.execute("UPDATE duke_stats SET rebounds = %s WHERE player = %s", (edit_rebounds, player_name))
         connection.commit()
@@ -89,7 +90,7 @@ def player_edit(player_name):
         update_other_fields(player_name)
 
     if field_select == '7':
-        edit_assists = input("Enter the player's updated assists: ")
+        edit_assists = input("\nEnter the player's updated assists: ")
 
         cursor.execute("UPDATE duke_stats SET assists = %s WHERE player = %s", (edit_assists, player_name))
         connection.commit()
@@ -98,8 +99,9 @@ def player_edit(player_name):
     else:
         start_over()
 
+
 def update_other_fields(player_name):
-    update_again = input("Would you like to update another field for this player? (Y)es or (N)o. ").lower()
+    update_again = input("\nWould you like to update another field for this player? (Y)es or (N)o. ").lower()
     if update_again == 'y' or update_again == 'yes':
         player_edit(player_name)
     else:
