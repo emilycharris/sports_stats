@@ -21,6 +21,12 @@ def lookup():
     player_name = input("What player would you like to look up? ")
     cursor.execute("SELECT * FROM duke_stats WHERE player = %s;", (player_name,))
     result = cursor.fetchone()
+    if result is None:
+        none_player = input("That player is not in the database.  Would you like to (r)e-enter the name or (a)dd a new player? ")
+        if none_player == 'a' or none_player == 'add':
+            add()
+        else:
+            lookup()
 
     print("\n| Player Name: {} "
           "| Class: {} "
@@ -133,7 +139,27 @@ connection = psycopg2.connect("dbname=learning_sql user = dbperson")
 
 cursor = connection.cursor()
 
-start_over()
+
+#start_over()
+
+def sort():
+    sort_by = input("Would you like to see the top five players by (p)oints, (r)ebounds, or (a)ssists? ")
+    if sort_by == 'p' or sort_by == 'points':
+        cursor.execute("SELECT * FROM duke_stats ORDER BY points DESC LIMIT 5;")
+        result = cursor.fetchall()
+        print(result)
+    elif sort_by == 'r' or sort_by == 'rebounds':
+        cursor.execute("SELECT * FROM duke_stats ORDER BY rebounds DESC LIMIT 5;")
+        result = cursor.fetchall()
+        print(result)
+    elif sort_by == 'a' or sort_by == 'assists':
+        cursor.execute("SELECT * FROM duke_stats ORDER BY assists DESC LIMIT 5;")
+        result = cursor.fetchall()
+        print(result)
+    else:
+        start_over()
+sort()
 
 cursor.close()
 connection.close()
+
