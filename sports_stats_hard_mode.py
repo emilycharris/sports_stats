@@ -1,13 +1,17 @@
 import psycopg2
 
+
 def start_over():
-    start_over = input("Would you like to (l)ook up or edit a player, (a)dd a new player, or (q)uit? ").lower()
+    start_over = input("Would you like to (l)ook up or edit a player, (a)dd a new player, (v)iew top player stats, or (q)uit? ").lower()
 
     if start_over == 'l' or start_over == 'lookup':
         lookup()
 
     if start_over == 'a' or start_over == 'add':
         add()
+
+    if start_over == 'v' or start_over == 'view':
+        sort()
 
     if start_over == 'q' or start_over == 'quit':
         exit()
@@ -21,20 +25,14 @@ def lookup():
     player_name = input("What player would you like to look up? ")
     cursor.execute("SELECT * FROM duke_stats WHERE player = %s;", (player_name,))
     result = cursor.fetchone()
+    print_result(result)
+
     if result is None:
         none_player = input("That player is not in the database.  Would you like to (r)e-enter the name or (a)dd a new player? ")
         if none_player == 'a' or none_player == 'add':
             add()
         else:
             lookup()
-
-    print("\n| Player Name: {} "
-          "| Class: {} "
-          "| Position: {} "
-          "| Height: {} "
-          "| Points: {} "
-          "| Rebounds: {} "
-          "| Assists: {} |\n".format(result[0], result[1], result[2], result[3], result[4], result[5], result[6]))
 
     edit_input = input("Would you like to (e)dit the stats on this player or (r)eturn to the menu? ").lower()
     if edit_input == 'r' or edit_input == 'return':
@@ -135,30 +133,53 @@ def add():
     print("Player added")
     start_over()
 
-connection = psycopg2.connect("dbname=learning_sql user = dbperson")
-
-cursor = connection.cursor()
-
-
-#start_over()
 
 def sort():
     sort_by = input("Would you like to see the top five players by (p)oints, (r)ebounds, or (a)ssists? ")
     if sort_by == 'p' or sort_by == 'points':
         cursor.execute("SELECT * FROM duke_stats ORDER BY points DESC LIMIT 5;")
-        result = cursor.fetchall()
-        print(result)
+        results = cursor.fetchall()
+        print_header()
+        for result in results:
+            print_result(result)
     elif sort_by == 'r' or sort_by == 'rebounds':
         cursor.execute("SELECT * FROM duke_stats ORDER BY rebounds DESC LIMIT 5;")
-        result = cursor.fetchall()
-        print(result)
+        results = cursor.fetchall()
+        print_header()
+        for result in results:
+            print_result(result)
     elif sort_by == 'a' or sort_by == 'assists':
         cursor.execute("SELECT * FROM duke_stats ORDER BY assists DESC LIMIT 5;")
-        result = cursor.fetchall()
-        print(result)
+        results = cursor.fetchall()
+        print_header()
+        for result in results:
+            print_result(result)
     else:
         start_over()
-sort()
+
+
+def print_header():
+    print("\n|Player              |Class     |Position  |Height    |Points    |Rebounds  |Assists   |")
+    print("+--------------------+----------+----------+----------+----------+----------+----------+")
+
+
+def print_result(result):
+    print("|" + result[0] + int(20 - len(result[0])) * ' ' + "|"
+          + result[1] + int(10 - len(result[1])) * ' ' + "|"
+          + result[2] + int(10 - len(result[2])) * ' ' + "|"
+          + result[3] + int(10 - len(result[3])) * ' ' + "|"
+          + str(result[4]) + int(10 - len(str(result[4]))) * ' ' + "|"
+          + str(result[5]) + int(10 - len(str(result[5]))) * ' ' + "|"
+          + str(result[6]) + int(10 - len(str(result[6]))) * ' ' + "|")
+
+
+
+
+connection = psycopg2.connect("dbname=learning_sql user = dbperson")
+
+cursor = connection.cursor()
+
+start_over()
 
 cursor.close()
 connection.close()
