@@ -25,7 +25,9 @@ def lookup():
     player_name = input("What player would you like to look up? ")
     cursor.execute("SELECT * FROM duke_stats WHERE player = %s;", (player_name,))
     result = cursor.fetchone()
+    print_header()
     print_result(result)
+    print("\n")
 
     if result is None:
         none_player = input("That player is not in the database.  Would you like to (r)e-enter the name or (a)dd a new player? ")
@@ -76,30 +78,41 @@ def player_edit(player_name):
         connection.commit()
 
         update_other_fields(player_name)
+    try:
+        if field_select == '5':
+            edit_points = input("\nEnter the player's updated points: ")
 
-    if field_select == '5':
-        edit_points = input("\nEnter the player's updated points: ")
+            cursor.execute("UPDATE duke_stats SET points = %s WHERE player = %s", (edit_points, player_name))
+            connection.commit()
 
-        cursor.execute("UPDATE duke_stats SET points = %s WHERE player = %s", (edit_points, player_name))
-        connection.commit()
+            update_other_fields(player_name)
+    except psycopg2.DataError:
+        print("That is not a valid input.  Try again.")
+        player_edit(player_name)
 
-        update_other_fields(player_name)
+    try:
+        if field_select == '6':
+            edit_rebounds = input("\nEnter the player's updated rebounds: ")
 
-    if field_select == '6':
-        edit_rebounds = input("\nEnter the player's updated rebounds: ")
+            cursor.execute("UPDATE duke_stats SET rebounds = %s WHERE player = %s", (edit_rebounds, player_name))
+            connection.commit()
 
-        cursor.execute("UPDATE duke_stats SET rebounds = %s WHERE player = %s", (edit_rebounds, player_name))
-        connection.commit()
+            update_other_fields(player_name)
+    except psycopg2.DataError:
+        print("That is not a valid input.  Try again.")
+        player_edit(player_name)
 
-        update_other_fields(player_name)
+    try:
+        if field_select == '7':
+            edit_assists = input("\nEnter the player's updated assists: ")
 
-    if field_select == '7':
-        edit_assists = input("\nEnter the player's updated assists: ")
+            cursor.execute("UPDATE duke_stats SET assists = %s WHERE player = %s", (edit_assists, player_name))
+            connection.commit()
 
-        cursor.execute("UPDATE duke_stats SET assists = %s WHERE player = %s", (edit_assists, player_name))
-        connection.commit()
-
-        update_other_fields(player_name)
+            update_other_fields(player_name)
+    except psycopg2.DataError:
+        print("That is not a valid input.  Try again.")
+        player_edit(player_name)
     else:
         start_over()
 
@@ -126,8 +139,8 @@ def add():
                        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
                        (add_name, add_class, add_position, add_height, add_points, add_rebounds, add_assists))
     except psycopg2.DataError:
-        print("That is not a valid input.  Try again.")
-        start_over()
+        print("\nThat is not a valid input.  Try again.")
+        add()
 
     connection.commit()
     print("Player added")
@@ -142,18 +155,24 @@ def sort():
         print_header()
         for result in results:
             print_result(result)
+        print("\n")
+        start_over()
     elif sort_by == 'r' or sort_by == 'rebounds':
         cursor.execute("SELECT * FROM duke_stats ORDER BY rebounds DESC LIMIT 5;")
         results = cursor.fetchall()
         print_header()
         for result in results:
             print_result(result)
+        print("\n")
+        start_over()
     elif sort_by == 'a' or sort_by == 'assists':
         cursor.execute("SELECT * FROM duke_stats ORDER BY assists DESC LIMIT 5;")
         results = cursor.fetchall()
         print_header()
         for result in results:
             print_result(result)
+        print("\n")
+        start_over()
     else:
         start_over()
 
