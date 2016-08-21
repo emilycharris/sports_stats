@@ -1,5 +1,22 @@
 import psycopg2
 
+def do_something(choice, question, query_string, player_name):
+    # choice -> str
+    # question -> str
+    # query_string -> str of sql
+    # query_params -> tuple of values
+    try:
+        if field_select == choice: #
+            edit_field = input("\n{}: ").format(question) #
+
+            cursor.execute(query_string, (edit_field, player_name)) #
+            connection.commit()
+
+            update_other_fields(player_name)
+    except psycopg2.DataError:
+        print("That is not a valid input.  Try again.")
+        player_edit(player_name)
+
 
 def start_over():
     start_over = input("Would you like to (l)ook up or edit a player, (a)dd a new player, (v)iew top player stats, or (q)uit? ").lower()
@@ -47,13 +64,13 @@ def lookup():
 def player_edit(player_name):
     field_select = input("\nWould you like to edit the player's (1) name, (2) class, (3) position, (4) height,\n"
                         "(5) points, (6) rebounds, or (7) assists?  Please enter 1-7. ")
-    if field_select == '1':
-        edit_name = input("\nEnter the player's updated name: ")
 
-        cursor.execute("UPDATE duke_stats SET player = %s WHERE player = %s", (edit_name, player_name))
-        connection.commit()
-
-        update_other_fields(player_name)
+    do_something(
+        '1',
+        "Enter the player's updated name", 
+        "UPDATE duke_stats SET player = %s WHERE player = %s",
+        player_name
+    )
 
     if field_select == '2':
         edit_class = input("\nEnter the player's updated class: ")
@@ -78,6 +95,7 @@ def player_edit(player_name):
         connection.commit()
 
         update_other_fields(player_name)
+
     try:
         if field_select == '5':
             edit_points = input("\nEnter the player's updated points: ")
@@ -202,4 +220,3 @@ start_over()
 
 cursor.close()
 connection.close()
-
